@@ -31,7 +31,7 @@ build/
 
 ### VS Code ###
 .vscode/
-.env*
+.env.*
 AGENTS.md
 TODO.txt
 application-dev.yml
