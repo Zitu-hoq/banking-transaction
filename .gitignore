@@ -36,3 +36,5 @@ AGENTS.md
 TODO.txt
 application-dev.yml
 application-prod.yml
+logback.yml
+logs/
