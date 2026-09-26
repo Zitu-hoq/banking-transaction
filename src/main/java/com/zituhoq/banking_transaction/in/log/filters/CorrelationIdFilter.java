@@ -1,4 +1,4 @@
-package com.zituhoq.banking_transaction.filters;
+package com.zituhoq.banking_transaction.in.log.filters;
 
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
