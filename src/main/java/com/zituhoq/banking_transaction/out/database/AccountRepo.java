@@ -1,4 +1,7 @@
 package com.zituhoq.banking_transaction.out.database;
 
-public interface AccountRepo {
+import com.zituhoq.banking_transaction.out.database.entities.AccountJpaEntity;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface AccountRepo extends JpaRepository<AccountJpaEntity, Long> {
 }
