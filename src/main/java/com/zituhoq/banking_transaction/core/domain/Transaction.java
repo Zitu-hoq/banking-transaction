@@ -31,4 +31,34 @@ public class Transaction {
     public void markAsFailed() {
         this.status = TransactionStatus.FAILED;
     }
+
+    //  getters
+
+    public TransactionId getTransactionId() {
+        return transactionId;
+    }
+
+    public AccountId getSourceAccountId() {
+        return sourceAccountId;
+    }
+
+    public AccountId getTargetAccountId() {
+        return targetAccountId;
+    }
+
+    public Money getAmount() {
+        return amount;
+    }
+
+    public TransactionType getType() {
+        return type;
+    }
+
+    public TransactionStatus getStatus() {
+        return status;
+    }
+
+    public Instant getCreatedAt() {
+        return createdAt;
+    }
 }
