@@ -7,8 +7,7 @@ import com.zituhoq.banking_transaction.core.valueObjects.Currency;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -16,6 +15,9 @@ import java.time.Instant;
 @Entity
 @Table(name = "transactions")
 @Getter
+@Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class TransactionJpaEntity {
 
     @Id
