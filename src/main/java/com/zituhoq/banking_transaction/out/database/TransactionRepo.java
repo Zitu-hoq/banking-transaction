@@ -4,8 +4,11 @@ import com.zituhoq.banking_transaction.out.database.entities.TransactionJpaEntit
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 
 public interface TransactionRepo extends JpaRepository<TransactionJpaEntity, Long> {
-    Page<TransactionJpaEntity> findByAccountId(Long id, Pageable pageable);
+    @Query("SELECT t FROM TransactionJpaEntity t WHERE t.sourceAccountId = :accountId OR t.targetAccountId = :accountId")
+    Page<TransactionJpaEntity> findByAccountId(@Param("accountId") Long id, Pageable pageable);
 }
