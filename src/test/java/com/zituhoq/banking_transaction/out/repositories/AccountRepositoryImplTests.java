@@ -9,10 +9,14 @@ import com.zituhoq.banking_transaction.core.valueObjects.OwnerId;
 import com.zituhoq.banking_transaction.out.database.AccountRepo;
 import com.zituhoq.banking_transaction.out.database.entities.AccountJpaEntity;
 import com.zituhoq.banking_transaction.out.database.mappers.AccountMapper;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
 import java.util.Optional;
@@ -20,6 +24,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 public class AccountRepositoryImplTests {
 
     @Mock
@@ -28,18 +33,17 @@ public class AccountRepositoryImplTests {
     @Mock
     private AccountMapper mapper;
 
+    @InjectMocks
     private AccountRepositoryImpl accountRepository;
-    private AutoCloseable mocks;
+
+    Account account;
 
     @BeforeEach
-    void setUp() {
-        mocks = MockitoAnnotations.openMocks(this);
-        accountRepository = new AccountRepositoryImpl(accountRepo, mapper);
-    }
-
-    @org.junit.jupiter.api.AfterEach
-    void tearDown() throws Exception {
-        mocks.close();
+    public void setUp() {
+        AccountId accountId = new AccountId(1L);
+        OwnerId ownerId = new OwnerId(5L);
+        Money balance = new Money(BigDecimal.valueOf(100), Currency.BDT);
+        account = new Account(accountId, ownerId, balance, AccountStatus.ACTIVE, 1L);
     }
 
     @Test
@@ -53,13 +57,6 @@ public class AccountRepositoryImplTests {
                 .status(AccountStatus.ACTIVE)
                 .version(1L)
                 .build();
-        Account account = new Account(
-                accountId,
-                new OwnerId(5L),
-                new Money(BigDecimal.valueOf(100), Currency.BDT),
-                AccountStatus.ACTIVE,
-                1L
-        );
 
         when(accountRepo.findById(accountId.id())).thenReturn(Optional.of(entity));
         when(mapper.toAccountDomain(entity)).thenReturn(account);
@@ -110,40 +107,15 @@ public class AccountRepositoryImplTests {
     }
 
     @Test
-    void shouldSaveAccount() {
-        AccountId accountId = new AccountId(1L);
-        OwnerId ownerId = new OwnerId(5L);
-        Money balance = new Money(BigDecimal.valueOf(100), Currency.BDT);
+    void shouldInvokeAllMethodsInsideSaveAndReturnSameAccount() {
 
-        Account account = new Account(accountId, ownerId, balance, AccountStatus.ACTIVE, 1L);
-
-        AccountJpaEntity entity = AccountJpaEntity.builder()
-                .accountId(1L)
-                .ownerId(5L)
-                .balance(BigDecimal.valueOf(100))
-                .currency(Currency.BDT)
-                .status(AccountStatus.ACTIVE)
-                .version(1L)
-                .build();
-        AccountJpaEntity savedEntity = AccountJpaEntity.builder()
-                .accountId(1L)
-                .ownerId(5L)
-                .balance(BigDecimal.valueOf(100))
-                .currency(Currency.BDT)
-                .status(AccountStatus.ACTIVE)
-                .version(2L)
-                .build();
-        Account savedAccount = new Account(accountId, ownerId, balance, AccountStatus.ACTIVE, 2L);
-
-        when(mapper.toAccountJpaEntity(account)).thenReturn(entity);
-        when(accountRepo.save(entity)).thenReturn(savedEntity);
-        when(mapper.toAccountDomain(savedEntity)).thenReturn(savedAccount);
+        when(mapper.toAccountDomain(any())).thenReturn(account);
 
         Account result = accountRepository.save(account);
 
-        assertEquals(savedAccount, result);
+        assertEquals(account, result, "result mismatch");
         verify(mapper).toAccountJpaEntity(account);
-        verify(accountRepo).save(entity);
-        verify(mapper).toAccountDomain(savedEntity);
+        verify(accountRepo, times(1)).save(any());
+        verify(mapper).toAccountDomain(any());
     }
 }

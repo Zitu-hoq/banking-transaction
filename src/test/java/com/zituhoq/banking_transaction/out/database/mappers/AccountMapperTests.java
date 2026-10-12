@@ -7,7 +7,6 @@ import com.zituhoq.banking_transaction.core.valueObjects.Currency;
 import com.zituhoq.banking_transaction.core.valueObjects.Money;
 import com.zituhoq.banking_transaction.core.valueObjects.OwnerId;
 import com.zituhoq.banking_transaction.out.database.entities.AccountJpaEntity;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
@@ -16,12 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class AccountMapperTests {
 
-    private AccountMapper mapper;
-
-    @BeforeEach
-    void setUp() {
-        mapper = new AccountMapperImpl();
-    }
+    private final AccountMapper mapper = new AccountMapperImpl();
 
     @Test
     void shouldMapDomainToJpaEntity() {
