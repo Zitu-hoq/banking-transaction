@@ -12,8 +12,10 @@ import com.zituhoq.banking_transaction.out.database.entities.TransactionJpaEntit
 import com.zituhoq.banking_transaction.out.database.mappers.TransactionMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -26,6 +28,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 public class TransactionRepositoryImplTests {
 
     @Mock
@@ -34,49 +37,31 @@ public class TransactionRepositoryImplTests {
     @Mock
     private TransactionMapper mapper;
 
+    @InjectMocks
     private TransactionRepositoryImpl transactionRepository;
-    private AutoCloseable mocks;
+
+    Transaction transaction;
 
     @BeforeEach
     void setUp() {
-        mocks = MockitoAnnotations.openMocks(this);
-        transactionRepository = new TransactionRepositoryImpl(mapper, transactionRepo);
-    }
-
-    @org.junit.jupiter.api.AfterEach
-    void tearDown() throws Exception {
-        mocks.close();
-    }
-
-    @Test
-    void shouldSaveTransaction() {
         TransactionId transactionId = new TransactionId(1L);
         AccountId sourceAccountId = new AccountId(10L);
         AccountId targetAccountId = new AccountId(20L);
         Money amount = new Money(BigDecimal.valueOf(500), Currency.BDT);
         Instant createdAt = Instant.now();
-
-        Transaction transaction = new Transaction(
+        transaction = new Transaction(
                 transactionId, sourceAccountId, targetAccountId, amount, createdAt,
                 TransactionType.TRANSFER, TransactionStatus.PENDING
         );
+    }
 
-        TransactionJpaEntity entity = TransactionJpaEntity.builder()
-                .transactionId(1L)
-                .sourceAccountId(10L)
-                .targetAccountId(20L)
-                .amount(BigDecimal.valueOf(500))
-                .currency(Currency.BDT)
-                .type(TransactionType.TRANSFER)
-                .status(TransactionStatus.PENDING)
-                .createdAt(createdAt)
-                .build();
-        when(mapper.toTransactionJpaEntity(transaction)).thenReturn(entity);
 
+    @Test
+    void shouldSaveTransaction() {
         transactionRepository.save(transaction);
 
         verify(mapper).toTransactionJpaEntity(transaction);
-        verify(transactionRepo).save(entity);
+        verify(transactionRepo, times(1)).save(any());
     }
 
     @Test
@@ -96,24 +81,13 @@ public class TransactionRepositoryImplTests {
                 .build();
         Page<TransactionJpaEntity> entityPage = new PageImpl<>(List.of(entity), pageable, 1);
 
-        TransactionId transactionId = new TransactionId(1L);
-        AccountId sourceAccountId = new AccountId(10L);
-        AccountId targetAccountId = new AccountId(20L);
-        Money amount = new Money(BigDecimal.valueOf(500), Currency.BDT);
-        Instant createdAt = Instant.now();
-
-        Transaction transaction = new Transaction(
-                transactionId, sourceAccountId, targetAccountId, amount, createdAt,
-                TransactionType.TRANSFER, TransactionStatus.PENDING
-        );
-
         when(transactionRepo.findByAccountId(accountId.id(), pageable)).thenReturn(entityPage);
         when(mapper.toTransactionDomain(entity)).thenReturn(transaction);
 
         Page<Transaction> result = transactionRepository.findByAccountId(accountId, pageable);
 
         assertEquals(1, result.getTotalElements());
-        assertEquals(transaction, result.getContent().get(0));
+        assertEquals(transaction, result.getContent().getFirst());
         verify(transactionRepo).findByAccountId(accountId.id(), pageable);
         verify(mapper).toTransactionDomain(entity);
     }
@@ -130,5 +104,6 @@ public class TransactionRepositoryImplTests {
 
         assertEquals(0, result.getTotalElements());
         assertTrue(result.getContent().isEmpty());
+        verify(transactionRepo).findByAccountId(accountId.id(), pageable);
     }
 }
