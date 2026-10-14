@@ -1,4 +1,9 @@
 package com.zituhoq.banking_transaction.core.valueObjects;
 
-public record TransactionId(Long id) {
+import java.util.UUID;
+
+public record TransactionId(UUID id) {
+    public static TransactionId newId(){
+        return new TransactionId(UUID.randomUUID());
+    }
 }

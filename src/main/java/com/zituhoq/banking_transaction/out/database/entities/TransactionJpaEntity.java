@@ -11,6 +11,7 @@ import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.UUID;
 
 @Entity
 @Table(name = "transactions")
@@ -21,16 +22,15 @@ import java.time.Instant;
 public class TransactionJpaEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long transactionId;
+    private UUID transactionId;
 
     @NotNull
     @Column(nullable = false)
-    private Long sourceAccountId;
+    private UUID sourceAccountId;
 
     @NotNull
     @Column(nullable = false)
-    private Long targetAccountId;
+    private UUID targetAccountId;
 
     @NotNull
     @DecimalMin("0.50")

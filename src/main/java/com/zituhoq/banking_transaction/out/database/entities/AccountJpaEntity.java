@@ -8,6 +8,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 @Entity
 @Table(name = "accounts")
@@ -18,8 +19,7 @@ import java.math.BigDecimal;
 public class AccountJpaEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long accountId;
+    private UUID accountId;
 
     @NotNull
     @Column(unique = true, nullable = false)
