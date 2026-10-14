@@ -25,7 +25,7 @@ public class AccountTests {
     @BeforeAll
     static void preSetUp()
     {
-        accountId =  new AccountId(1L);
+        accountId =  AccountId.newId();
         ownerId = new OwnerId(5L);
     }
 

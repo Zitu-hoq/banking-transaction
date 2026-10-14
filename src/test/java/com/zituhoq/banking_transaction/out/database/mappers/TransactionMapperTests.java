@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -27,9 +28,9 @@ public class TransactionMapperTests {
 
     @Test
     void shouldMapDomainToJpaEntity() {
-        TransactionId transactionId = new TransactionId(1L);
-        AccountId sourceAccountId = new AccountId(10L);
-        AccountId targetAccountId = new AccountId(20L);
+        TransactionId transactionId = TransactionId.newId();
+        AccountId sourceAccountId = AccountId.newId();
+        AccountId targetAccountId = AccountId.newId();
         Money amount = new Money(BigDecimal.valueOf(500), Currency.BDT);
         Instant createdAt = Instant.now();
 
@@ -53,9 +54,9 @@ public class TransactionMapperTests {
     @Test
     void shouldMapJpaEntityToDomain() {
         TransactionJpaEntity entity = TransactionJpaEntity.builder()
-                .transactionId(1L)
-                .sourceAccountId(10L)
-                .targetAccountId(20L)
+                .transactionId(UUID.randomUUID())
+                .sourceAccountId(UUID.randomUUID())
+                .targetAccountId(UUID.randomUUID())
                 .amount(BigDecimal.valueOf(500))
                 .currency(Currency.BDT)
                 .type(TransactionType.TRANSFER)
@@ -66,9 +67,9 @@ public class TransactionMapperTests {
         Transaction transaction = mapper.toTransactionDomain(entity);
 
         assertNotNull(transaction);
-        assertEquals(new TransactionId(1L), transaction.getTransactionId());
-        assertEquals(new AccountId(10L), transaction.getSourceAccountId());
-        assertEquals(new AccountId(20L), transaction.getTargetAccountId());
+        assertEquals(new TransactionId(entity.getTransactionId()), transaction.getTransactionId());
+        assertEquals(new AccountId(entity.getSourceAccountId()), transaction.getSourceAccountId());
+        assertEquals(new AccountId(entity.getTargetAccountId()), transaction.getTargetAccountId());
         assertEquals(new Money(BigDecimal.valueOf(500), Currency.BDT), transaction.getAmount());
         assertEquals(TransactionType.TRANSFER, transaction.getType());
         assertEquals(TransactionStatus.PENDING, transaction.getStatus());
@@ -77,9 +78,9 @@ public class TransactionMapperTests {
 
     @Test
     void shouldMapDifferentCurrencies() {
-        TransactionId transactionId = new TransactionId(2L);
-        AccountId sourceAccountId = new AccountId(30L);
-        AccountId targetAccountId = new AccountId(40L);
+        TransactionId transactionId = TransactionId.newId();
+        AccountId sourceAccountId = AccountId.newId();
+        AccountId targetAccountId = AccountId.newId();
         Money amount = new Money(BigDecimal.valueOf(1000), Currency.USD);
         Instant createdAt = Instant.now();
 
@@ -99,9 +100,9 @@ public class TransactionMapperTests {
     void shouldMapAllTransactionTypes() {
         for (TransactionType type : TransactionType.values()) {
             Transaction transaction = new Transaction(
-                    new TransactionId(1L),
-                    new AccountId(10L),
-                    new AccountId(20L),
+                    TransactionId.newId(),
+                    AccountId.newId(),
+                    AccountId.newId(),
                     new Money(BigDecimal.valueOf(100), Currency.BDT),
                     Instant.now(),
                     type,
@@ -117,9 +118,9 @@ public class TransactionMapperTests {
     void shouldMapAllTransactionStatuses() {
         for (TransactionStatus status : TransactionStatus.values()) {
             Transaction transaction = new Transaction(
-                    new TransactionId(1L),
-                    new AccountId(10L),
-                    new AccountId(20L),
+                    TransactionId.newId(),
+                    AccountId.newId(),
+                    AccountId.newId(),
                     new Money(BigDecimal.valueOf(100), Currency.BDT),
                     Instant.now(),
                     TransactionType.TRANSFER,

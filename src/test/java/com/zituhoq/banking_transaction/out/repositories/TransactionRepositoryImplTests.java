@@ -44,9 +44,9 @@ public class TransactionRepositoryImplTests {
 
     @BeforeEach
     void setUp() {
-        TransactionId transactionId = new TransactionId(1L);
-        AccountId sourceAccountId = new AccountId(10L);
-        AccountId targetAccountId = new AccountId(20L);
+        TransactionId transactionId = TransactionId.newId();
+        AccountId sourceAccountId = AccountId.newId();
+        AccountId targetAccountId = AccountId.newId();
         Money amount = new Money(BigDecimal.valueOf(500), Currency.BDT);
         Instant createdAt = Instant.now();
         transaction = new Transaction(
@@ -66,13 +66,13 @@ public class TransactionRepositoryImplTests {
 
     @Test
     void shouldFindByAccountId() {
-        AccountId accountId = new AccountId(10L);
+        AccountId accountId = AccountId.newId();
         Pageable pageable = PageRequest.of(0, 10);
 
         TransactionJpaEntity entity = TransactionJpaEntity.builder()
-                .transactionId(1L)
-                .sourceAccountId(10L)
-                .targetAccountId(20L)
+                .transactionId(transaction.getTransactionId().id())
+                .sourceAccountId(transaction.getSourceAccountId().id())
+                .targetAccountId(transaction.getTargetAccountId().id())
                 .amount(BigDecimal.valueOf(500))
                 .currency(Currency.BDT)
                 .type(TransactionType.TRANSFER)
@@ -94,7 +94,7 @@ public class TransactionRepositoryImplTests {
 
     @Test
     void shouldReturnEmptyPageWhenNoTransactionsFound() {
-        AccountId accountId = new AccountId(99L);
+        AccountId accountId = AccountId.newId();
         Pageable pageable = PageRequest.of(0, 10);
 
         Page<TransactionJpaEntity> emptyPage = new PageImpl<>(List.of(), pageable, 0);

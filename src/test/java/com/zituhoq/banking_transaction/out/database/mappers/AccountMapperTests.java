@@ -10,6 +10,7 @@ import com.zituhoq.banking_transaction.out.database.entities.AccountJpaEntity;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -19,7 +20,7 @@ public class AccountMapperTests {
 
     @Test
     void shouldMapDomainToJpaEntity() {
-        AccountId accountId = new AccountId(1L);
+        AccountId accountId = AccountId.newId();
         OwnerId ownerId = new OwnerId(5L);
         Money balance = new Money(BigDecimal.valueOf(1000), Currency.BDT);
 
@@ -37,7 +38,7 @@ public class AccountMapperTests {
     @Test
     void shouldMapJpaEntityToDomain() {
         AccountJpaEntity entity = AccountJpaEntity.builder()
-                .accountId(1L)
+                .accountId(UUID.randomUUID())
                 .ownerId(5L)
                 .balance(BigDecimal.valueOf(1000))
                 .currency(Currency.BDT)
@@ -48,7 +49,7 @@ public class AccountMapperTests {
         Account account = mapper.toAccountDomain(entity);
 
         assertNotNull(account);
-        assertEquals(new AccountId(1L), account.getAccountId());
+        assertEquals(new AccountId(entity.getAccountId()), account.getAccountId());
         assertEquals(new OwnerId(5L), account.getOwnerId());
         assertEquals(new Money(BigDecimal.valueOf(1000), Currency.BDT), account.getBalance());
         assertEquals(AccountStatus.ACTIVE, account.getStatus());
@@ -58,7 +59,7 @@ public class AccountMapperTests {
     @Test
     void shouldMapDifferentCurrencies() {
         Account account = new Account(
-                new AccountId(2L),
+                AccountId.newId(),
                 new OwnerId(10L),
                 new Money(BigDecimal.valueOf(500), Currency.USD),
                 AccountStatus.ACTIVE,
@@ -74,7 +75,7 @@ public class AccountMapperTests {
     void shouldMapAllAccountStatuses() {
         for (AccountStatus status : AccountStatus.values()) {
             Account account = new Account(
-                    new AccountId(1L),
+                    AccountId.newId(),
                     new OwnerId(5L),
                     new Money(BigDecimal.valueOf(100), Currency.BDT),
                     status,
@@ -89,7 +90,7 @@ public class AccountMapperTests {
     @Test
     void shouldMapZeroBalance() {
         Account account = new Account(
-                new AccountId(1L),
+                AccountId.newId(),
                 new OwnerId(5L),
                 new Money(BigDecimal.ZERO, Currency.BDT),
                 AccountStatus.ACTIVE,
@@ -104,7 +105,7 @@ public class AccountMapperTests {
     @Test
     void shouldMapLargeBalance() {
         Account account = new Account(
-                new AccountId(1L),
+                AccountId.newId(),
                 new OwnerId(5L),
                 new Money(BigDecimal.valueOf(999999999.99), Currency.BDT),
                 AccountStatus.ACTIVE,

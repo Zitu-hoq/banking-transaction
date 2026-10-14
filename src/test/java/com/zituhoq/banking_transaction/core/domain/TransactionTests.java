@@ -24,9 +24,9 @@ public class TransactionTests {
 
     @BeforeEach
     void setUp() {
-        transactionId = new TransactionId(1L);
-        sourceAccountId = new AccountId(10L);
-        targetAccountId = new AccountId(20L);
+        transactionId = TransactionId.newId();
+        sourceAccountId = AccountId.newId();
+        targetAccountId = AccountId.newId();
         amount = new Money(BigDecimal.valueOf(500), Currency.BDT);
         createdAt = Instant.now();
         transaction = new Transaction(

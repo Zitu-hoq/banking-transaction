@@ -38,7 +38,7 @@ public class AccountRepositoryImplTests {
 
     @BeforeEach
     public void setUp() {
-        AccountId accountId = new AccountId(1L);
+        AccountId accountId = AccountId.newId();
         OwnerId ownerId = new OwnerId(5L);
         Money balance = new Money(BigDecimal.valueOf(100), Currency.BDT);
         account = new Account(accountId, ownerId, balance, AccountStatus.ACTIVE, 1L);
@@ -46,9 +46,9 @@ public class AccountRepositoryImplTests {
 
     @Test
     void shouldFindById() {
-        AccountId accountId = new AccountId(1L);
+        AccountId accountId = AccountId.newId();
         AccountJpaEntity entity = AccountJpaEntity.builder()
-                .accountId(1L)
+                .accountId(accountId.id())
                 .ownerId(5L)
                 .balance(BigDecimal.valueOf(100))
                 .currency(Currency.BDT)
@@ -69,7 +69,7 @@ public class AccountRepositoryImplTests {
 
     @Test
     void shouldReturnEmptyWhenAccountNotFound() {
-        AccountId accountId = new AccountId(99L);
+        AccountId accountId = AccountId.newId();
 
         when(accountRepo.findById(accountId.id())).thenReturn(Optional.empty());
 
@@ -82,7 +82,7 @@ public class AccountRepositoryImplTests {
 
     @Test
     void shouldCheckExistsById() {
-        AccountId accountId = new AccountId(1L);
+        AccountId accountId = AccountId.newId();
 
         when(accountRepo.existsById(accountId.id())).thenReturn(true);
 
@@ -94,7 +94,7 @@ public class AccountRepositoryImplTests {
 
     @Test
     void shouldReturnFalseWhenAccountDoesNotExist() {
-        AccountId accountId = new AccountId(99L);
+        AccountId accountId = AccountId.newId();
 
         when(accountRepo.existsById(accountId.id())).thenReturn(false);
 
