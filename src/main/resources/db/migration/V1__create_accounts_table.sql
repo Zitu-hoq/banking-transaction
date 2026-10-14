@@ -1,5 +1,5 @@
 create table accounts(
-    account_id bigserial primary key,
+    account_id uuid primary key,
     owner_id bigint  not null unique,
     balance numeric(20, 2) not null,
     currency varchar(20) not null,
