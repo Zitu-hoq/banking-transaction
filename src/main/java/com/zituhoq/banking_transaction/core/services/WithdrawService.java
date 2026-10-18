@@ -1,6 +1,7 @@
 package com.zituhoq.banking_transaction.core.services;
 
 import com.zituhoq.banking_transaction.core.domain.*;
+import com.zituhoq.banking_transaction.core.domain.exception.AccountNotFoundException;
 import com.zituhoq.banking_transaction.core.domain.exception.InvalidAccountStateException;
 import com.zituhoq.banking_transaction.core.ports.in.WithdrawUseCase;
 import com.zituhoq.banking_transaction.core.ports.out.AccountRepository;
@@ -25,7 +26,7 @@ public class WithdrawService implements WithdrawUseCase {
     public TransactionResult withdraw(WithdrawCommand command) {
         //load account
         Account account = accountRepository.findById(command.accountId())
-                .orElseThrow(InvalidAccountStateException::new);
+                .orElseThrow(() -> new AccountNotFoundException("Account not found"));
 
         // perform withdraw operation
         account.debit(command.amount());

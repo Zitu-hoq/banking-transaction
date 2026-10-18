@@ -1,6 +1,7 @@
 package com.zituhoq.banking_transaction.core.services;
 
 import com.zituhoq.banking_transaction.core.domain.*;
+import com.zituhoq.banking_transaction.core.domain.exception.AccountNotFoundException;
 import com.zituhoq.banking_transaction.core.domain.exception.InvalidAccountStateException;
 import com.zituhoq.banking_transaction.core.ports.in.DepositUseCase;
 import com.zituhoq.banking_transaction.core.ports.out.AccountRepository;
@@ -24,7 +25,7 @@ public class DepositService implements DepositUseCase {
     @Override
     public TransactionResult deposit(DepositCommand command) {
         Account account = accountRepository.findById(command.accountId())
-                .orElseThrow(InvalidAccountStateException::new);
+                .orElseThrow(()-> new AccountNotFoundException("Account not found"));
 
         account.credit(command.amount());
 
