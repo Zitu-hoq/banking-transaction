@@ -14,8 +14,8 @@ import java.time.Instant;
 
 public class TransferMoneyService implements TransferMoneyUseCase {
 
-    AccountRepository accountRepository;
-    TransactionRepository transactionRepository;
+    private final AccountRepository accountRepository;
+    private final TransactionRepository transactionRepository;
 
     public TransferMoneyService(AccountRepository accountRepository, TransactionRepository transactionRepository) {
         this.accountRepository = accountRepository;
