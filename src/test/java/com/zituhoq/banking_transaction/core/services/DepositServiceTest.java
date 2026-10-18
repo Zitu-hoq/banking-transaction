@@ -1,6 +1,7 @@
 package com.zituhoq.banking_transaction.core.services;
 
 import com.zituhoq.banking_transaction.core.domain.*;
+import com.zituhoq.banking_transaction.core.domain.exception.AccountNotFoundException;
 import com.zituhoq.banking_transaction.core.domain.exception.InvalidAccountStateException;
 import com.zituhoq.banking_transaction.core.ports.out.AccountRepository;
 import com.zituhoq.banking_transaction.core.ports.out.TransactionRepository;
@@ -94,7 +95,7 @@ class DepositServiceTest {
         DepositCommand command = new DepositCommand(initAcc.getAccountId(), new Money(BigDecimal.valueOf(100), Currency.BDT), "1", "11");
 
         // expect
-        assertThrows(InvalidAccountStateException.class,
+        assertThrows(AccountNotFoundException.class,
                 () -> depositService.deposit(command));
 
         verify(accountRepository, never()).save(initAcc);

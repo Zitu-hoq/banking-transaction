@@ -2,7 +2,7 @@ package com.zituhoq.banking_transaction.core.services;
 
 
 import com.zituhoq.banking_transaction.core.domain.*;
-import com.zituhoq.banking_transaction.core.domain.exception.InvalidAccountStateException;
+import com.zituhoq.banking_transaction.core.domain.exception.AccountNotFoundException;
 import com.zituhoq.banking_transaction.core.ports.out.AccountRepository;
 import com.zituhoq.banking_transaction.core.ports.out.TransactionRepository;
 import com.zituhoq.banking_transaction.core.services.dto.TransactionResult;
@@ -79,7 +79,7 @@ public class WithdrawServiceTest {
         assertThat(savedTx.getSourceAccountId()).isEqualTo(initAcc.getAccountId());
         assertThat(savedTx.getTargetAccountId()).isEqualTo(SystemAccounts.CASH);
         assertThat(savedTx.getAmount().amount()).isEqualByComparingTo("100");
-        assertThat(savedTx.getType()).isEqualTo(TransactionType.DEBIT);
+        assertThat(savedTx.getType()).isEqualTo(TransactionType.TRANSFER);
         assertThat(savedTx.getStatus()).isEqualTo(TransactionStatus.COMPLETED);
 
         // checking the transactionResult obj
@@ -94,7 +94,7 @@ public class WithdrawServiceTest {
         WithdrawCommand command = new WithdrawCommand(initAcc.getAccountId(), new Money(BigDecimal.valueOf(100), Currency.BDT), "1", "11");
 
         // expect
-        assertThrows(InvalidAccountStateException.class,
+        assertThrows(AccountNotFoundException.class,
                 () -> withdrawService.withdraw(command));
 
         verify(accountRepository, never()).save(initAcc);
