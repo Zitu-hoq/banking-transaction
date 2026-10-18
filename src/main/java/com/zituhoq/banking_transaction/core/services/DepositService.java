@@ -24,13 +24,16 @@ public class DepositService implements DepositUseCase {
 
     @Override
     public TransactionResult deposit(DepositCommand command) {
+        //load account
         Account account = accountRepository.findById(command.accountId())
                 .orElseThrow(()-> new AccountNotFoundException("Account not found"));
-
+        // perform deposit operation
         account.credit(command.amount());
 
+        // update account
         accountRepository.save(account);
 
+        // create transaction and persist it
         Transaction tx = new Transaction(
                 TransactionId.newId(),
                 SystemAccounts.SYSTEM,
@@ -42,7 +45,7 @@ public class DepositService implements DepositUseCase {
         );
         transactionRepository.save(tx);
 
-
+        // return unified result
         return new TransactionResult(
                 tx.getTransactionId(),
                 tx.getSourceAccountId(),
