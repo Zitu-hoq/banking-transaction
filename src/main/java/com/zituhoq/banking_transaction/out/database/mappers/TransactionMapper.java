@@ -1,9 +1,6 @@
 package com.zituhoq.banking_transaction.out.database.mappers;
 
 import com.zituhoq.banking_transaction.core.domain.Transaction;
-import com.zituhoq.banking_transaction.core.valueObjects.AccountId;
-import com.zituhoq.banking_transaction.core.valueObjects.Money;
-import com.zituhoq.banking_transaction.core.valueObjects.TransactionId;
 import com.zituhoq.banking_transaction.out.database.entities.TransactionJpaEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
