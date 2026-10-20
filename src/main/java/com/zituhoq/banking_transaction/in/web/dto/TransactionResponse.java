@@ -9,11 +9,12 @@ import jakarta.validation.constraints.NotNull;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.UUID;
 
 public record TransactionResponse (
-        @NotNull TransactionId transactionId,
-        @NotNull AccountId sourceAccountId,
-        @NotNull AccountId targetAccountId,
+        @NotNull UUID transactionId,
+        @NotNull UUID sourceAccountId,
+        @NotNull UUID targetAccountId,
         @NotNull BigDecimal amount,
         @NotNull Currency currency,
         @NotNull TransactionType type,

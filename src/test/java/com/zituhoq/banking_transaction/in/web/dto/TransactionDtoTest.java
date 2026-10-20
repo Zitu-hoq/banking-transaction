@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 import java.util.Set;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -20,7 +21,7 @@ public class TransactionDtoTest {
 
     @Test
     void shouldHoldValuesTest(){
-        AccountId id = AccountId.newId();
+        UUID id = UUID.randomUUID();
         BigDecimal amount = new BigDecimal("1.00");
         Currency currency = Currency.USD;
         String idempotencyKey = ("1");
@@ -39,7 +40,7 @@ public class TransactionDtoTest {
     @Test
     void shouldShowValidationMessage() {
         DepositRequest req = new DepositRequest(
-                AccountId.newId(),
+                UUID.randomUUID(),
                 new BigDecimal("0.50"), // invalid
                 Currency.USD,
                 "idem-001",

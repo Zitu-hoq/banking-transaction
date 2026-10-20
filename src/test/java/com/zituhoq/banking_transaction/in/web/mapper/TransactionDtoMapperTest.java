@@ -19,6 +19,7 @@ import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -29,7 +30,7 @@ public class TransactionDtoMapperTest {
     // common variables
     String key;
     String xid;
-    AccountId id;
+    UUID id;
     Currency currency;
     BigDecimal amount;
     Money money;
@@ -38,7 +39,7 @@ public class TransactionDtoMapperTest {
     void setUp() {
         key = "1";
         xid = "x-12";
-        id = AccountId.newId();
+        id = UUID.randomUUID();
         currency = Currency.BDT;
         amount = BigDecimal.TEN;
         money = new Money(amount, currency);
@@ -50,13 +51,13 @@ public class TransactionDtoMapperTest {
         WithdrawRequest request = new WithdrawRequest(id, amount, currency, key, xid);
 
         // expect
-        WithdrawCommand cmd = new WithdrawCommand(id, money, key, xid);
+        WithdrawCommand cmd = new WithdrawCommand(new AccountId(id), money, key, xid);
 
         // function call
         WithdrawCommand res = transactionDtoMapper.toWithdrawCommand(request);
 
         // check
-        assertEquals(id, res.accountId());
+        assertEquals(id, res.accountId().id());
         assertEquals(key, res.idempotencyKey());
         assertEquals(xid, res.correlationId());
         assertEquals(amount, res.amount().amount());
@@ -72,7 +73,7 @@ public class TransactionDtoMapperTest {
         DepositCommand res = transactionDtoMapper.toDepositCommand(request);
 
         // check
-        assertEquals(id, res.accountId());
+        assertEquals(id, res.accountId().id());
         assertEquals(amount, res.amount().amount());
         assertEquals(currency, res.amount().currency());
         assertEquals(key, res.idempotencyKey());
@@ -81,11 +82,11 @@ public class TransactionDtoMapperTest {
 
     @Test
     void shouldMapTransferCommand() {
-        TransferRequest request = new TransferRequest(id, AccountId.newId(), amount, currency, key, xid);
+        TransferRequest request = new TransferRequest(id, UUID.randomUUID(), amount, currency, key, xid);
 
         TransferCommand res = transactionDtoMapper.toTransferCommand(request);
 
-        assertEquals(id, res.sourceAccountId());
+        assertEquals(id, res.sourceAccountId().id());
         assertEquals(amount, res.amount().amount());
         assertEquals(currency, res.amount().currency());
         assertEquals(key, res.idempotencyKey());
@@ -94,17 +95,17 @@ public class TransactionDtoMapperTest {
 
     @Test
     void shouldMapTransactionResult() {
-        TransactionId transactionId = TransactionId.newId();
+        UUID transactionId = UUID.randomUUID();
         Instant creationTime = Instant.now();
-        AccountId targetAccountId = AccountId.newId();
+        UUID targetAccountId = UUID.randomUUID();
         TransactionResponse response = new TransactionResponse(transactionId, id, targetAccountId, amount, currency, TransactionType.TRANSFER, TransactionStatus.COMPLETED, creationTime);
 
         // function call
         TransactionResult res = transactionDtoMapper.toTransactionResult(response);
 
-        assertEquals(transactionId, res.transactionId());
-        assertEquals(id, res.sourceAccountId());
-        assertEquals(targetAccountId, res.targetAccountId());
+        assertEquals(transactionId, res.transactionId().id());
+        assertEquals(id, res.sourceAccountId().id());
+        assertEquals(targetAccountId, res.targetAccountId().id());
         assertEquals(amount, res.amount().amount());
         assertEquals(currency, res.amount().currency());
         assertEquals(TransactionType.TRANSFER, res.type());
@@ -115,7 +116,7 @@ public class TransactionDtoMapperTest {
 
     @Test
     void shouldMapWithdrawRequestFromCommand() {
-        WithdrawCommand cmd = new WithdrawCommand(id, money, key, xid);
+        WithdrawCommand cmd = new WithdrawCommand(new AccountId(id), money, key, xid);
 
         WithdrawRequest res = transactionDtoMapper.toWithdrawRequest(cmd);
 
@@ -129,7 +130,7 @@ public class TransactionDtoMapperTest {
 
     @Test
     void shouldMapDepositRequestFromCommand() {
-        DepositCommand cmd = new DepositCommand(id, money, key, xid);
+        DepositCommand cmd = new DepositCommand(new AccountId(id), money, key, xid);
 
         DepositRequest res = transactionDtoMapper.toDepositRequest(cmd);
 
@@ -142,8 +143,8 @@ public class TransactionDtoMapperTest {
 
     @Test
     void shouldMapTransferRequestFromCommand() {
-        AccountId targetId = AccountId.newId();
-        TransferCommand cmd = new TransferCommand(id, targetId, money, key, xid);
+        UUID targetId = UUID.randomUUID();
+        TransferCommand cmd = new TransferCommand(new AccountId(id), new AccountId(targetId), money, key, xid);
 
         TransferRequest res = transactionDtoMapper.toTransferRequest(cmd);
 
@@ -157,11 +158,11 @@ public class TransactionDtoMapperTest {
 
     @Test
     void shouldMapTransactionResponseFromResult() {
-        TransactionId transactionId = TransactionId.newId();
+        UUID transactionId = UUID.randomUUID();
         Instant creationTime = Instant.now();
-        AccountId targetAccountId = AccountId.newId();
+        UUID targetAccountId = UUID.randomUUID();
         TransactionResult result = new TransactionResult(
-                transactionId, id, targetAccountId, money,
+                new TransactionId(transactionId), new AccountId(id), new AccountId(targetAccountId), money,
                 TransactionType.TRANSFER, TransactionStatus.COMPLETED, creationTime
         );
 

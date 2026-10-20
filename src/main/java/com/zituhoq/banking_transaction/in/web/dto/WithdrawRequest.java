@@ -7,9 +7,10 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 public record WithdrawRequest(
-        @NotNull AccountId accountId,
+        @NotNull UUID accountId,
         @DecimalMin("1.00") BigDecimal amount,
         @NotNull Currency currency,
         @NotBlank String idempotencyKey,
